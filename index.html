@@ -1,349 +1,289 @@
-Develop a professional, advanced, and highly functional web application called **“Loona Image Compressor”**.
-
-Build the application as a **fully self-contained client-side web app** using only **HTML, CSS, and vanilla JavaScript**. Do not require a backend, database, server, API key, paid service, or manual code updates after deployment.
-
-### 1. Core Purpose
-
-Create a powerful image compression tool that allows users to upload images, compress them with adjustable quality settings, preview the results, compare original and compressed images, and download the optimized files easily.
-
-### 2. Supported Image Formats
-
-Support the following major formats wherever browser capabilities allow:
-
-* JPG / JPEG
-* PNG
-* WebP
-* GIF
-* SVG
-
-Clearly indicate when a format has browser-specific limitations.
-
-For animated GIFs, preserve animation whenever technically possible. Do not silently convert an animated image into a static image.
-
-For SVG files, provide safe optimization/minification without executing embedded scripts or unsafe content.
-
-### 3. Modern User Interface
-
-Create a clean, modern, professional, responsive interface with:
-
-* Application name: **Loona Image Compressor**
-* Attractive header and branding
-* Large drag-and-drop upload area
-* “Choose Images” button
-* Multiple-image upload support
-* Upload progress/status indicators
-* Image preview thumbnails
-* File name, format, dimensions, and original file size
-* Responsive design for desktop, tablet, and mobile
-* Clear success, warning, and error messages
-* Accessible buttons, labels, and keyboard navigation
-
-Use a professional visual design rather than a basic demo-style interface.
-
-### 4. Drag-and-Drop System
-
-Users must be able to:
-
-* Drag images into the upload area
-* Drop multiple images simultaneously
-* Select multiple images through the file picker
-* Remove individual files before compression
-* Clear the entire queue
-* Prevent unsupported files from being processed
-* Display useful validation messages
-
-### 5. Compression Controls
-
-Provide precise user controls including:
-
-* Compression quality slider: 10–100
-* Preset options:
-
-  * Maximum Compression
-  * Balanced
-  * High Quality
-  * Custom
-* Target output format where conversion is supported
-* Optional maximum width
-* Optional maximum height
-* Resize percentage
-* Maintain aspect ratio toggle
-* Metadata removal option
-* Transparent-background preservation where applicable
-
-Show the selected compression settings clearly before processing.
-
-### 6. Image Processing
-
-Perform compression primarily on the user's device using browser-based APIs such as:
-
-* Canvas
-* OffscreenCanvas where supported
-* File API
-* Blob API
-* ImageBitmap where supported
-
-Avoid unnecessary server uploads so that users can process private images locally.
-
-The application should:
-
-1. Read the selected image.
-2. Validate the file.
-3. Decode it safely.
-4. Apply resizing if requested.
-5. Apply compression according to the selected quality.
-6. Generate the optimized output.
-7. Calculate the new file size.
-8. Calculate percentage size reduction.
-9. Display the compressed preview.
-10. Provide a reliable download option.
-
-### 7. Before-and-After Comparison
-
-For every processed image, display:
-
-* Original preview
-* Compressed preview
-* Original file size
-* Compressed file size
-* Percentage saved
-* Original dimensions
-* Final dimensions
-* Output format
-
-Provide an easy visual comparison between the original and optimized image.
-
-### 8. Background Removal
-
-Include an optional **“Remove Background”** feature.
-
-The architecture should allow background removal to work through a browser-compatible local processing approach where technically possible.
-
-Important:
-
-* Do not falsely claim professional AI background removal if no actual background-removal model is included.
-* If a local AI model/library is required, clearly structure the application so the feature can use it without exposing private images unnecessarily.
-* If true background removal cannot be implemented reliably with only native browser APIs, disable the feature gracefully and explain the limitation instead of providing a fake result.
-
-### 9. Image Enhancement
-
-Include an optional **“Enhance Image”** feature with controls such as:
-
-* Brightness
-* Contrast
-* Sharpness
-* Saturation
-* Exposure
-
-Allow users to preview enhancement changes before applying them.
-
-Use lightweight browser-side processing where possible.
-
-### 10. Batch Compression
-
-Support processing multiple images in one session.
-
-For each file show:
-
-* Processing status
-* Progress
-* Original size
-* Compressed size
-* Savings percentage
-* Success/error state
-
-Include:
-
-**Compress All**
-
-and, when practical:
-
-**Download All**
-
-For multiple downloads, create a ZIP file entirely in the browser if an appropriate self-contained client-side library is available. Otherwise provide individual download buttons.
-
-### 11. Reliable Download System
-
-Every processed image must have a working download mechanism.
-
-Include:
-
-* Download button for each image
-* Correct file extension
-* Correct MIME type
-* Meaningful output filename
-* Download All option where possible
-* No broken blob URLs
-* Proper cleanup of temporary object URLs
-
-Example:
-
-`photo.jpg` → `photo-compressed.webp`
-
-### 12. Privacy and Security
-
-The application should be designed with privacy and security in mind.
-
-Requirements:
-
-* Process images locally whenever possible.
-* Do not upload images to external servers by default.
-* Do not collect personal information.
-* Do not use unnecessary tracking scripts.
-* Sanitize SVG input before rendering it.
-* Never execute scripts contained inside uploaded SVG files.
-* Validate file types and file sizes.
-* Handle corrupted or unsupported files gracefully.
-* Avoid unsafe use of `innerHTML`.
-* Revoke temporary object URLs when they are no longer needed.
-
-### 13. Performance
-
-Optimize the application for normal desktop and mobile browsers.
-
-Use:
-
-* Lazy processing where appropriate
-* Efficient memory management
-* Object URL cleanup
-* Asynchronous processing
-* Web Workers where beneficial
-* Non-blocking UI during large image processing
-
-Do not freeze the interface while processing large files.
-
-### 14. Error Handling
-
-Provide user-friendly error messages for:
-
-* Unsupported format
-* Corrupted image
-* File too large
-* Browser limitation
-* Compression failure
-* Memory limitations
-* Background-removal failure
-* Download failure
-
-The application must never crash because of one invalid image.
-
-### 15. Dashboard Statistics
-
-Display useful session-level statistics such as:
-
-* Number of images processed
-* Total original size
-* Total compressed size
-* Total storage saved
-* Average compression percentage
-
-Update these values automatically after processing.
-
-### 16. Responsive Design
-
-The application must work smoothly on:
-
-* Desktop
-* Laptop
-* Tablet
-* Mobile phone
-
-Use responsive CSS with an intuitive mobile layout.
-
-### 17. Accessibility
-
-Follow good accessibility practices:
-
-* Semantic HTML
-* Proper labels
-* Keyboard navigation
-* Visible focus states
-* ARIA attributes where appropriate
-* Sufficient contrast
-* Accessible error messages
-* Buttons with clear text
-
-### 18. Code Architecture
-
-Keep the project clean and maintainable.
-
-Separate the code logically into:
-
-* HTML structure
-* CSS styling
-* JavaScript application logic
-
-Use clear functions/modules for:
-
-* File validation
-* Upload handling
-* Image decoding
-* Compression
-* Resizing
-* Enhancement
-* Background removal
-* Preview generation
-* Statistics
-* Download handling
-* Error handling
-
-Use descriptive variable and function names and meaningful comments only where necessary.
-
-### 19. No Fake Functionality
-
-This is extremely important.
-
-Do not create buttons that only look functional.
-
-Every visible feature must either:
-
-1. Work correctly in the browser, or
-2. Be clearly marked as unavailable because the required technology is not present.
-
-Do not simulate compression percentages, fake AI processing, fake progress, or fake download results.
-
-### 20. Self-Contained Requirement
-
-The final application should be capable of running by opening the HTML file directly or deploying it as a static website.
-
-Avoid unnecessary external dependencies.
-
-If a third-party browser library is absolutely necessary for a feature such as ZIP generation or AI-based processing, explain why it is needed and keep the integration isolated and secure.
-
-### 21. Final Deliverable
-
-Return the complete working application as:
-
-1. `index.html`
-2. `style.css`
-3. `script.js`
-
-Also provide clear instructions for running it.
-
-The final result should look and feel like a **real professional image-compression product**, not a simple coding exercise.
-
-Before providing the final code, verify that:
-
-* Upload works.
-* Drag-and-drop works.
-* Multiple files work.
-* Compression works.
-* Quality controls work.
-* Preview works.
-* File-size calculations are correct.
-* Download works.
-* Error handling works.
-* Responsive layout works.
-* No button is non-functional.
-* No fake AI feature is presented as real.
-* Temporary browser resources are cleaned up properly.
-
-Application title and branding:
-
-**Loona Image Compressor**
-
-Tagline:
-
-**Compress Smarter. Keep Quality.**
-
-Build the application with a polished, production-oriented user experience while remaining realistic about what can and cannot be implemented entirely inside a browser.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loona Image Compressor</title>
+<meta name="description" content="Compress images locally in your browser with Loona Image Compressor.">
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --text:#172033; --muted:#687386;
+    --primary:#315efb; --primary2:#6846ff; --border:#e4e8f0;
+    --success:#16855b; --danger:#d33b4a; --shadow:0 18px 50px rgba(25,38,70,.09);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    background:linear-gradient(180deg,#f7f9ff 0%,var(--bg) 100%);color:var(--text);
+  }
+  .wrap{max-width:1120px;margin:auto;padding:28px 18px 50px}
+  header{text-align:center;margin:10px 0 26px}
+  .brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:28px;letter-spacing:-.6px}
+  .logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;display:grid;place-items:center;font-weight:900;box-shadow:0 10px 24px rgba(49,94,251,.25)}
+  header p{margin:9px 0 0;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+  .upload{padding:28px}
+  .drop{
+    border:2px dashed #bdc8dc;border-radius:18px;padding:48px 20px;text-align:center;
+    background:#fbfcff;transition:.2s;
+  }
+  .drop.drag{border-color:var(--primary);background:#f1f5ff;transform:scale(1.005)}
+  .upload-icon{font-size:42px;margin-bottom:10px}
+  .drop h2{margin:0 0 7px;font-size:21px}
+  .drop p{margin:0 0 18px;color:var(--muted)}
+  button,.file-btn{
+    border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;font-size:14px;
+  }
+  .primary{color:white;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 18px rgba(49,94,251,.2)}
+  .secondary{background:#eef2f8;color:#344056}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+  .control{padding:18px}.control label{display:block;font-size:13px;font-weight:800;margin-bottom:9px}
+  input[type=range]{width:100%;accent-color:var(--primary)}
+  input[type=number],select{
+    width:100%;padding:10px 11px;border:1px solid var(--border);border-radius:10px;background:white;color:var(--text)
+  }
+  .range-row{display:flex;align-items:center;gap:12px}.value{min-width:45px;text-align:right;font-weight:800}
+  .check{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--muted)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+  .stat{padding:16px}.stat small{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:20px;margin-top:4px}
+  #results{margin-top:18px;display:grid;gap:14px}
+  .item{padding:16px;display:grid;grid-template-columns:130px 1fr auto;gap:16px;align-items:center}
+  .thumb{width:130px;height:100px;border-radius:12px;object-fit:cover;background:#eef1f6;border:1px solid var(--border)}
+  .meta h3{font-size:15px;margin:0 0 7px;word-break:break-word}.meta p{margin:4px 0;color:var(--muted);font-size:12px}
+  .saving{font-weight:800;color:var(--success)}
+  .status{font-size:12px;font-weight:700;margin-top:7px}
+  .error{color:var(--danger)}
+  .progress{height:7px;background:#edf0f5;border-radius:99px;overflow:hidden;margin-top:10px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--primary2));transition:width .2s}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+  @media(max-width:800px){.controls{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.item{grid-template-columns:90px 1fr}.thumb{width:90px;height:80px}.item .download{grid-column:2}}
+  @media(max-width:540px){.wrap{padding:18px 12px 35px}.upload{padding:15px}.drop{padding:34px 14px}.controls,.stats{grid-template-columns:1fr}.item{grid-template-columns:75px 1fr}.thumb{width:75px;height:70px}.brand{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><div class="logo">L</div>Loona Image Compressor</div>
+    <p>Compress Smarter. Keep Quality. — processing happens locally in your browser.</p>
+  </header>
+
+  <section class="card upload">
+    <div id="drop" class="drop" tabindex="0" role="button" aria-label="Upload images by dragging or selecting files">
+      <div class="upload-icon">🖼️</div>
+      <h2>Drop your images here</h2>
+      <p>JPG, JPEG, PNG and WebP are supported for compression.</p>
+      <button id="choose" class="primary" type="button">Choose Images</button>
+      <input id="files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+    </div>
+
+    <div class="controls">
+      <div class="card control">
+        <label for="quality">Compression Quality</label>
+        <div class="range-row">
+          <input id="quality" type="range" min="10" max="100" value="82">
+          <span id="qualityValue" class="value">82%</span>
+        </div>
+      </div>
+      <div class="card control">
+        <label for="format">Output Format</label>
+        <select id="format">
+          <option value="original">Keep Original (where possible)</option>
+          <option value="image/webp">WebP</option>
+          <option value="image/jpeg">JPEG</option>
+          <option value="image/png">PNG</option>
+        </select>
+      </div>
+      <div class="card control">
+        <label>Resize (optional)</label>
+        <input id="maxWidth" type="number" min="1" placeholder="Maximum width (px)">
+        <label class="check"><input id="keepRatio" type="checkbox" checked> Keep aspect ratio</label>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="compress" class="primary" disabled>Compress Images</button>
+      <button id="clear" class="secondary" disabled>Clear</button>
+    </div>
+    <div id="progress" class="progress" style="display:none"><div id="bar" class="bar"></div></div>
+  </section>
+
+  <section class="stats">
+    <div class="card stat"><small>Images</small><strong id="count">0</strong></div>
+    <div class="card stat"><small>Original Size</small><strong id="original">0 B</strong></div>
+    <div class="card stat"><small>Compressed Size</small><strong id="compressed">0 B</strong></div>
+    <div class="card stat"><small>Total Saved</small><strong id="saved">0%</strong></div>
+  </section>
+
+  <section id="results"></section>
+  <footer>Private by design: your selected images are processed on your device and are not uploaded by this page.</footer>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const filesInput = $("files"), drop = $("drop"), choose = $("choose");
+  const quality = $("quality"), qualityValue = $("qualityValue"), format = $("format");
+  const maxWidth = $("maxWidth"), keepRatio = $("keepRatio");
+  const compressBtn = $("compress"), clearBtn = $("clear");
+  const results = $("results"), progress = $("progress"), bar = $("bar");
+  let queue = [], outputUrls = [];
+
+  const supported = ["image/jpeg","image/png","image/webp"];
+
+  function fmt(bytes){
+    if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+    const units = ["B","KB","MB","GB"];
+    const i = Math.min(Math.floor(Math.log(bytes)/Math.log(1024)), units.length-1);
+    return (bytes / Math.pow(1024,i)).toFixed(i ? 2 : 0) + " " + units[i];
+  }
+  function esc(s){
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+  function updateStats(){
+    $("count").textContent = queue.length;
+    $("original").textContent = fmt(queue.reduce((a,f)=>a+f.size,0));
+    $("compressed").textContent = "0 B";
+    $("saved").textContent = "0%";
+    compressBtn.disabled = !queue.length;
+    clearBtn.disabled = !queue.length;
+  }
+  function addFiles(list){
+    const incoming = [...list];
+    const valid = incoming.filter(f => supported.includes(f.type));
+    const bad = incoming.length - valid.length;
+    if (bad) alert(bad + " file(s) skipped. Please use JPG, PNG, or WebP images.");
+    queue = [...queue, ...valid];
+    renderQueue();
+    updateStats();
+  }
+  function renderQueue(){
+    results.innerHTML = queue.map((f,i) => `
+      <article class="card item">
+        <img class="thumb" src="${URL.createObjectURL(f)}" alt="">
+        <div class="meta">
+          <h3>${esc(f.name)}</h3>
+          <p>${f.type.replace("image/","").toUpperCase()} • ${fmt(f.size)}</p>
+          <p id="status-${i}" class="status">Ready to compress</p>
+        </div>
+        <button class="secondary" data-remove="${i}">Remove</button>
+      </article>`).join("");
+    results.querySelectorAll("[data-remove]").forEach(b => b.onclick = () => {
+      queue.splice(Number(b.dataset.remove),1); renderQueue(); updateStats();
+    });
+  }
+  function loadImage(file){
+    return new Promise((resolve,reject)=>{
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Could not decode image.")); };
+      img.src = url;
+    });
+  }
+  function canvasBlob(canvas, type, q){
+    return new Promise((resolve,reject)=>{
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error("Browser could not create the output image.")), type, q);
+    });
+  }
+  function outputType(file){
+    if(format.value !== "original") return format.value;
+    return file.type;
+  }
+  function outputName(name,type){
+    const base = name.replace(/\.[^.]+$/,"");
+    const ext = type==="image/webp" ? "webp" : type==="image/jpeg" ? "jpg" : "png";
+    return base + "-compressed." + ext;
+  }
+  async function compressOne(file,index){
+    const status = $("status-"+index);
+    status.textContent = "Processing…";
+    status.className = "status";
+    const img = await loadImage(file);
+    let w = img.naturalWidth, h = img.naturalHeight;
+    const mw = parseInt(maxWidth.value,10);
+    if(mw > 0 && w > mw){
+      const ratio = mw / w; w = mw; h = Math.round(h * ratio);
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext("2d", {alpha:true});
+    if(outputType(file)==="image/jpeg"){
+      ctx.fillStyle = "#fff"; ctx.fillRect(0,0,w,h);
+    }
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(img,0,0,w,h);
+    const type = outputType(file);
+    const blob = await canvasBlob(canvas,type,Number(quality.value)/100);
+    if(blob.size >= file.size && type === file.type && !mw){
+      status.textContent = "Already optimized; original kept";
+      return {blob:file,type:file.type,w,h,kept:true};
+    }
+    status.textContent = "Done";
+    return {blob,type,w,h,kept:false};
+  }
+
+  async function compressAll(){
+    if(!queue.length) return;
+    progress.style.display = "block"; bar.style.width = "0%";
+    compressBtn.disabled = true;
+    outputUrls.forEach(URL.revokeObjectURL); outputUrls=[];
+    results.innerHTML = queue.map((f,i)=>`
+      <article class="card item">
+        <img id="img-${i}" class="thumb" alt="Compressed preview">
+        <div class="meta">
+          <h3>${esc(f.name)}</h3>
+          <p id="info-${i}">Processing…</p>
+          <p id="status-${i}" class="status">Processing…</p>
+        </div>
+        <div class="download"><button id="dl-${i}" class="primary" disabled>Download</button></div>
+      </article>`).join("");
+
+    let totalOriginal=0,totalCompressed=0;
+    for(let i=0;i<queue.length;i++){
+      try{
+        const file=queue[i], out=await compressOne(file,i);
+        totalOriginal += file.size; totalCompressed += out.blob.size;
+        const url=URL.createObjectURL(out.blob); outputUrls.push(url);
+        $("img-"+i).src=url;
+        $("info-"+i).textContent =
+          `${file.type.replace("image/","").toUpperCase()} → ${out.type.replace("image/","").toUpperCase()} • ${out.w}×${out.h} • ${fmt(file.size)} → ${fmt(out.blob.size)}`;
+        const saving = file.size ? ((1-out.blob.size/file.size)*100) : 0;
+        $("status-"+i).innerHTML = saving >= 0
+          ? `<span class="saving">${saving.toFixed(1)}% smaller</span>`
+          : `<span>Output is ${Math.abs(saving).toFixed(1)}% larger</span>`;
+        const dl=$("dl-"+i); dl.disabled=false;
+        dl.onclick=()=>{
+          const a=document.createElement("a"); a.href=url; a.download=outputName(file.name,out.type);
+          document.body.appendChild(a); a.click(); a.remove();
+        };
+      }catch(err){
+        $("status-"+i).textContent = err.message || "Compression failed";
+        $("status-"+i).className = "status error";
+      }
+      bar.style.width = ((i+1)/queue.length*100)+"%";
+      $("compressed").textContent=fmt(totalCompressed);
+      $("original").textContent=fmt(totalOriginal);
+      $("saved").textContent=totalOriginal ? Math.max(0,(1-totalCompressed/totalOriginal)*100).toFixed(1)+"%" : "0%";
+    }
+    compressBtn.disabled=false;
+  }
+
+  quality.oninput=()=>qualityValue.textContent=quality.value+"%";
+  choose.onclick=()=>filesInput.click();
+  filesInput.onchange=e=>{addFiles(e.target.files); filesInput.value="";};
+  ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));
+  ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag")}));
+  drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
+  drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();filesInput.click();}});
+  compressBtn.onclick=compressAll;
+  clearBtn.onclick=()=>{
+    queue=[]; outputUrls.forEach(URL.revokeObjectURL); outputUrls=[]; results.innerHTML="";
+    progress.style.display="none"; bar.style.width="0"; updateStats();
+  };
+  updateStats();
+})();
+</script>
+</body>
+</html>
