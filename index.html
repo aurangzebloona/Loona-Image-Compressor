@@ -31,13 +31,17 @@
   .upload-icon{font-size:42px;margin-bottom:10px}
   .drop h2{margin:0 0 7px;font-size:21px}
   .drop p{margin:0 0 18px;color:var(--muted)}
+  
+  .btn-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  
   button,.file-btn{
     border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;font-size:14px;
   }
   .primary{color:white;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 8px 18px rgba(49,94,251,.2)}
   .secondary{background:#eef2f8;color:#344056}
   button:disabled{opacity:.5;cursor:not-allowed}
-  .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+  
+  .controls{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
   .control{padding:18px}.control label{display:block;font-size:13px;font-weight:800;margin-bottom:9px}
   input[type=range]{width:100%;accent-color:var(--primary)}
   input[type=number],select{
@@ -57,8 +61,8 @@
   .error{color:var(--danger)}
   .progress{height:7px;background:#edf0f5;border-radius:99px;overflow:hidden;margin-top:10px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--primary2));transition:width .2s}
   footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
-  @media(max-width:800px){.controls{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.item{grid-template-columns:90px 1fr}.thumb{width:90px;height:80px}.item .download{grid-column:2}}
-  @media(max-width:540px){.wrap{padding:18px 12px 35px}.upload{padding:15px}.drop{padding:34px 14px}.controls,.stats{grid-template-columns:1fr}.item{grid-template-columns:75px 1fr}.thumb{width:75px;height:70px}.brand{font-size:23px}}
+  @media(max-width:800px){.controls{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.item{grid-template-columns:90px 1fr}.thumb{width:90px;height:80px}.item .download{grid-column:2}}
+  @media(max-width:540px){.wrap{padding:18px 12px 35px}.upload{padding:15px}.drop{padding:34px 14px}.stats{grid-template-columns:1fr}.item{grid-template-columns:75px 1fr}.thumb{width:75px;height:70px}.brand{font-size:23px}}
 </style>
 </head>
 <body>
@@ -73,18 +77,33 @@
       <div class="upload-icon">🖼️</div>
       <h2>Drop your images here</h2>
       <p>JPG, JPEG, PNG and WebP are supported for compression.</p>
-      <button id="choose" class="primary" type="button">Choose Images</button>
+      
+      <div class="btn-group">
+        <button id="choose" class="primary" type="button">📁 Choose Images</button>
+        <button id="cameraBtn" class="secondary" type="button">📷 Take Photo</button>
+      </div>
+      
+      <!-- Gallery Input -->
       <input id="files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+      <!-- Direct Camera Input fixed for mobile -->
+      <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden>
     </div>
 
     <div class="controls">
       <div class="card control">
         <label for="quality">Compression Quality</label>
         <div class="range-row">
-          <input id="quality" type="range" min="10" max="100" value="82">
+          <input id="quality" type="range" min="1" max="100" value="82">
           <span id="qualityValue" class="value">82%</span>
         </div>
       </div>
+      
+      <div class="card control">
+        <label for="targetKB">Target Size (KB)</label>
+        <input id="targetKB" type="number" min="1" placeholder="e.g. 100 (Optional)">
+        <small style="display:block; margin-top:6px; color:var(--muted); font-size:11.5px;">If set, overrides the quality slider automatically.</small>
+      </div>
+
       <div class="card control">
         <label for="format">Output Format</label>
         <select id="format">
@@ -123,8 +142,9 @@
 (() => {
   const $ = id => document.getElementById(id);
   const filesInput = $("files"), drop = $("drop"), choose = $("choose");
+  const cameraBtn = $("cameraBtn"), cameraInput = $("cameraInput");
   const quality = $("quality"), qualityValue = $("qualityValue"), format = $("format");
-  const maxWidth = $("maxWidth"), keepRatio = $("keepRatio");
+  const maxWidth = $("maxWidth"), keepRatio = $("keepRatio"), targetKB = $("targetKB");
   const compressBtn = $("compress"), clearBtn = $("clear");
   const results = $("results"), progress = $("progress"), bar = $("bar");
   let queue = [], outputUrls = [];
@@ -148,22 +168,31 @@
     compressBtn.disabled = !queue.length;
     clearBtn.disabled = !queue.length;
   }
-  function addFiles(list){
+  
+  // Custom add file function for camera so it doesn't skip formats
+  function addFiles(list, isCamera = false){
     const incoming = [...list];
-    const valid = incoming.filter(f => supported.includes(f.type));
-    const bad = incoming.length - valid.length;
-    if (bad) alert(bad + " file(s) skipped. Please use JPG, PNG, or WebP images.");
+    let valid = incoming;
+    
+    // Sirf files/gallery ke liye strict filter, camera image har haal mein accept hogi
+    if(!isCamera) {
+      valid = incoming.filter(f => supported.includes(f.type));
+      const bad = incoming.length - valid.length;
+      if (bad) alert(bad + " file(s) skipped. Please use JPG, PNG, or WebP images.");
+    }
+    
     queue = [...queue, ...valid];
     renderQueue();
     updateStats();
   }
+  
   function renderQueue(){
     results.innerHTML = queue.map((f,i) => `
       <article class="card item">
         <img class="thumb" src="${URL.createObjectURL(f)}" alt="">
         <div class="meta">
           <h3>${esc(f.name)}</h3>
-          <p>${f.type.replace("image/","").toUpperCase()} • ${fmt(f.size)}</p>
+          <p>${(f.type || "IMAGE").replace("image/","").toUpperCase()} • ${fmt(f.size)}</p>
           <p id="status-${i}" class="status">Ready to compress</p>
         </div>
         <button class="secondary" data-remove="${i}">Remove</button>
@@ -187,11 +216,12 @@
     });
   }
   function outputType(file){
+    // Default to jpeg if format is unknown (like some raw camera clicks)
     if(format.value !== "original") return format.value;
-    return file.type;
+    return file.type || "image/jpeg";
   }
   function outputName(name,type){
-    const base = name.replace(/\.[^.]+$/,"");
+    const base = name.replace(/\.[^.]+$/,"") || "photo";
     const ext = type==="image/webp" ? "webp" : type==="image/jpeg" ? "jpg" : "png";
     return base + "-compressed." + ext;
   }
@@ -215,8 +245,36 @@
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(img,0,0,w,h);
     const type = outputType(file);
-    const blob = await canvasBlob(canvas,type,Number(quality.value)/100);
-    if(blob.size >= file.size && type === file.type && !mw){
+    
+    let blob;
+    const targetVal = parseInt(targetKB.value, 10);
+    
+    if(targetVal > 0) {
+      status.textContent = "Adjusting to match target KB…";
+      const targetBytes = targetVal * 1024;
+      let minQ = 0.01, maxQ = 1.0, bestBlob = null;
+      let attempts = 0;
+      
+      while(attempts < 7) { 
+        let midQ = (minQ + maxQ) / 2;
+        let tempBlob = await canvasBlob(canvas, type, midQ);
+        
+        if (!bestBlob || Math.abs(tempBlob.size - targetBytes) < Math.abs(bestBlob.size - targetBytes)) {
+            bestBlob = tempBlob;
+        }
+        if (tempBlob.size > targetBytes) {
+            maxQ = midQ; 
+        } else {
+            minQ = midQ; 
+        }
+        attempts++;
+      }
+      blob = bestBlob;
+    } else {
+      blob = await canvasBlob(canvas, type, Number(quality.value)/100);
+    }
+
+    if(blob.size >= file.size && type === file.type && !mw && targetVal <= 0){
       status.textContent = "Already optimized; original kept";
       return {blob:file,type:file.type,w,h,kept:true};
     }
@@ -248,7 +306,7 @@
         const url=URL.createObjectURL(out.blob); outputUrls.push(url);
         $("img-"+i).src=url;
         $("info-"+i).textContent =
-          `${file.type.replace("image/","").toUpperCase()} → ${out.type.replace("image/","").toUpperCase()} • ${out.w}×${out.h} • ${fmt(file.size)} → ${fmt(out.blob.size)}`;
+          `${(file.type || "IMG").replace("image/","").toUpperCase()} → ${out.type.replace("image/","").toUpperCase()} • ${out.w}×${out.h} • ${fmt(file.size)} → ${fmt(out.blob.size)}`;
         const saving = file.size ? ((1-out.blob.size/file.size)*100) : 0;
         $("status-"+i).innerHTML = saving >= 0
           ? `<span class="saving">${saving.toFixed(1)}% smaller</span>`
@@ -272,15 +330,21 @@
 
   quality.oninput=()=>qualityValue.textContent=quality.value+"%";
   choose.onclick=()=>filesInput.click();
+  cameraBtn.onclick=()=>cameraInput.click();
+  
   filesInput.onchange=e=>{addFiles(e.target.files); filesInput.value="";};
+  cameraInput.onchange=e=>{addFiles(e.target.files, true); cameraInput.value="";};
+  
   ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));
   ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag")}));
   drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
   drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();filesInput.click();}});
+  
   compressBtn.onclick=compressAll;
   clearBtn.onclick=()=>{
     queue=[]; outputUrls.forEach(URL.revokeObjectURL); outputUrls=[]; results.innerHTML="";
     progress.style.display="none"; bar.style.width="0"; updateStats();
+    $("targetKB").value = "";
   };
   updateStats();
 })();
