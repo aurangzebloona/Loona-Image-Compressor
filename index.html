@@ -169,12 +169,10 @@
     clearBtn.disabled = !queue.length;
   }
   
-  // Custom add file function for camera so it doesn't skip formats
   function addFiles(list, isCamera = false){
     const incoming = [...list];
     let valid = incoming;
     
-    // Sirf files/gallery ke liye strict filter, camera image har haal mein accept hogi
     if(!isCamera) {
       valid = incoming.filter(f => supported.includes(f.type));
       const bad = incoming.length - valid.length;
@@ -216,7 +214,6 @@
     });
   }
   function outputType(file){
-    // Default to jpeg if format is unknown (like some raw camera clicks)
     if(format.value !== "original") return format.value;
     return file.type || "image/jpeg";
   }
@@ -231,10 +228,19 @@
     status.className = "status";
     const img = await loadImage(file);
     let w = img.naturalWidth, h = img.naturalHeight;
-    const mw = parseInt(maxWidth.value,10);
+    
+    const targetVal = parseInt(targetKB.value, 10);
+    let mw = parseInt(maxWidth.value,10);
+    
+    // FIX 1: Jab extreme compression chahiye (150 KB) aur tasweer badi ho, toh auto-resize karein taake tasweer phatay nahi.
+    if (targetVal > 0 && (!mw || mw <= 0) && w > 1200) {
+      mw = 1200; // Forms aur achi quality ke liye ideal width
+    }
+
     if(mw > 0 && w > mw){
       const ratio = mw / w; w = mw; h = Math.round(h * ratio);
     }
+    
     const canvas = document.createElement("canvas");
     canvas.width = w; canvas.height = h;
     const ctx = canvas.getContext("2d", {alpha:true});
@@ -247,12 +253,11 @@
     const type = outputType(file);
     
     let blob;
-    const targetVal = parseInt(targetKB.value, 10);
     
     if(targetVal > 0) {
       status.textContent = "Adjusting to match target KB…";
       const targetBytes = targetVal * 1024;
-      let minQ = 0.01, maxQ = 1.0, bestBlob = null;
+      let minQ = 0.05, maxQ = 1.0, bestBlob = null; // Changed minQ to prevent 1% paint effect
       let attempts = 0;
       
       while(attempts < 7) { 
@@ -273,6 +278,10 @@
     } else {
       blob = await canvasBlob(canvas, type, Number(quality.value)/100);
     }
+
+    // FIX 2: Browser memory clear karna taake GPU lagatar tasweerain filter karne par hang ya colors corrupt na kare
+    canvas.width = 0; 
+    canvas.height = 0;
 
     if(blob.size >= file.size && type === file.type && !mw && targetVal <= 0){
       status.textContent = "Already optimized; original kept";
